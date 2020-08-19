@@ -1,29 +1,39 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 directory="$(pwd)"
-echo
-echo -e "\e[93mThis script will install ADB & FastBoot Tools in Termux."
-echo
-echo -e "\e[32m[*] \e[34mDownloading wrapper script..."
-mkdir $PREFIX/tmp/adbtemp
+ECHO=$(true)
+for arg in $@; do
+  case "$arg" in
+    -q); ECHO=$(false) ;;
+esac;done
+
+if [ $ECHO ]; then
+  echo
+  echo -e "\e[93mThis script will install ADB & FastBoot Tools in Termux."
+  echo
+fi
+echo -e "\e[32m[*] \e[34mDownloading wrapper and binaries..."
+
 downpath="$PREFIX/tmp/adbtemp"
+mkdir "$downpath"
 wget https://github.com/MasterDevX/Termux-ADB/raw/master/bin/adb -P $downpath/ -q
-echo -e "\e[32m[*] \e[34mDownloading binaries..."
 wget https://github.com/MasterDevX/Termux-ADB/raw/master/bin/adb.bin -P $downpath/ -q
 wget https://github.com/MasterDevX/Termux-ADB/raw/master/bin/fastboot -P $downpath/ -q
 wget https://github.com/MasterDevX/Termux-ADB/raw/master/bin/fastboot-armeabi -P $downpath/ -q
-echo -e "\e[32m[*] \e[34mCopying files to bin..."
-cp $downpath/* $PREFIX/bin
-echo -e "\e[32m[*] \e[34mSetting execution permissions..."
+
+if [ $ECHO ]; then echo -e "\e[32m[*] \e[34mCopying files to bin...";fi
+cp $downpath/* $PREFIX/bin 
 files="$(ls $downpath)"
 cd $PREFIX/bin
 chmod +x $files
-echo -e "\e[32m[*] \e[34mCreating workspace directory..."
+
+if [ $ECHO ]; then echo -e "\e[32m[*] \e[34mCreating workspace directory...";fi
 cd $HOME
 if [ ! -d "adbfiles" ]; then
   mkdir adbfiles
 fi
-echo -e "\e[32m[*] \e[34mCleaning up..."
+
+if [ $ECHO ]; then echo -e "\e[32m[*] \e[34mCleaning up...";fi
 cd $directory
 rm -rf $downpath
 rm -rf InstallTools.sh
